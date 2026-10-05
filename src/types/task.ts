@@ -5,12 +5,14 @@ export type TaskCategory = 'general' | 'work' | 'personal' | 'urgent';
 export interface Task {
   id: string;
   title: string;
-  description?: string;
+  summary?: string; // short quoted summary shown on the card
+  description?: string; // full task body (Notion-style notes)
   completed: boolean;
   category: TaskCategory;
   priority: TaskPriority;
   createdAt: string; // ISO 8601 string
   updatedAt: string; // ISO 8601 string
+  order: number;
 }
 
 export type TaskFilter = 'all' | 'active' | 'completed';
@@ -19,6 +21,7 @@ export type TaskViewMode = 'grid' | 'list';
 
 export interface TaskCreateInput {
   title: string;
+  summary?: string;
   description?: string;
   category?: TaskCategory;
   priority?: TaskPriority;
@@ -26,6 +29,7 @@ export interface TaskCreateInput {
 
 export interface TaskUpdateInput {
   title?: string;
+  summary?: string;
   description?: string;
   category?: TaskCategory;
   priority?: TaskPriority;

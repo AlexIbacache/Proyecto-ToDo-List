@@ -15,14 +15,14 @@ export function EmptyState({
 }: EmptyStateProps) {
   if (type === "search") {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-[#232d3f] bg-[#141a26]/50">
-        <div className="w-12 h-12 rounded-xl bg-[#1e2636] border border-[#2d3a52] flex items-center justify-center text-[#8b9bb4] mb-3">
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/50">
+        <div className="w-12 h-12 rounded-xl bg-[var(--color-surface-hover)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-secondary)] mb-3">
           <SearchX className="w-6 h-6 stroke-[1.75]" />
         </div>
-        <h4 className="text-sm font-semibold text-[#f1f5f9] mb-1">
+        <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
           No se encontraron tareas coincidentes
         </h4>
-        <p className="text-xs text-[#8b9bb4] max-w-sm mb-4">
+        <p className="text-xs text-[var(--color-text-secondary)] max-w-sm mb-4">
           {searchQuery
             ? `No hay tareas que coincidan con la búsqueda "${searchQuery}". Intenta con otros términos.`
             : "No se encontraron tareas con los filtros actuales."}
@@ -38,14 +38,14 @@ export function EmptyState({
 
   if (type === "completed") {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-[#232d3f] bg-[#141a26]/50">
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/50">
         <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-3">
           <CheckCircle2 className="w-6 h-6 stroke-[1.75]" />
         </div>
-        <h4 className="text-sm font-semibold text-[#f1f5f9] mb-1">
+        <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
           No hay tareas completadas todavía
         </h4>
-        <p className="text-xs text-[#8b9bb4] max-w-sm">
+        <p className="text-xs text-[var(--color-text-secondary)] max-w-sm">
           Sigue avanzando con tus tareas activas. Cuando completes una, aparecerá aquí.
         </p>
       </div>
@@ -53,14 +53,14 @@ export function EmptyState({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-[#232d3f] bg-[#141a26]/50">
-      <div className="w-12 h-12 rounded-xl bg-[#1e2636] border border-[#2d3a52] flex items-center justify-center text-blue-400 mb-3">
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/50">
+      <div className="w-12 h-12 rounded-xl bg-[var(--color-surface-hover)] border border-[var(--color-border)] flex items-center justify-center text-blue-400 mb-3">
         <Plus className="w-6 h-6 stroke-[2]" />
       </div>
-      <h4 className="text-sm font-semibold text-[#f1f5f9] mb-1">
+      <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
         No hay tareas en esta lista
       </h4>
-      <p className="text-xs text-[#8b9bb4] max-w-sm mb-4">
+      <p className="text-xs text-[var(--color-text-secondary)] max-w-sm mb-4">
         Mantén tu día organizado y productivo añadiendo tu primera tarea.
       </p>
       {onAction && (

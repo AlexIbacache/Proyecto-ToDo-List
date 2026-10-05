@@ -9,17 +9,17 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", variant = "primary", size = "md", icon, children, disabled, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#10141d] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none";
+      "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none";
 
     const variantStyles = {
       primary:
-        "bg-[#2563eb] text-white hover:bg-[#1d4ed8] active:bg-[#1e40af] focus:ring-[#3b82f6] shadow-sm shadow-[#2563eb]/20",
+        "bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] active:bg-[var(--color-accent-hover)] focus:ring-[var(--color-accent-light)] shadow-sm shadow-[var(--color-accent)]/20",
       secondary:
-        "bg-[#1e2636] text-[#f1f5f9] hover:bg-[#28354c] active:bg-[#1a2230] border border-[#2d3a52] focus:ring-[#3b82f6]",
+        "bg-[var(--color-surface)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-surface-active)] border border-[var(--color-border)] focus:ring-[var(--color-accent)]",
       ghost:
-        "bg-transparent text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-[#18202e] focus:ring-[#3b82f6]",
+        "bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface)] focus:ring-[var(--color-accent)]",
       danger:
-        "bg-[#dc2626] text-white hover:bg-[#b91c1c] active:bg-[#991b1b] focus:ring-[#ef4444] shadow-sm shadow-[#dc2626]/20",
+        "bg-[var(--color-danger)] text-white hover:bg-red-600 active:bg-red-700 focus:ring-[var(--color-danger)] shadow-sm shadow-[var(--color-danger)]/20",
     };
 
     const sizeStyles = {

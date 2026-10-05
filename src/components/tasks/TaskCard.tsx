@@ -67,10 +67,10 @@ export function TaskCard({
           }
         }}
         aria-label={`Ver detalle de la tarea "${task.title}"`}
-        className={`group flex flex-col sm:flex-row sm:items-center sm:justify-between p-3.5 rounded-xl border transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6]/40 ${
+        className={`group flex flex-col sm:flex-row sm:items-center sm:justify-between p-3.5 rounded-xl border transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 ${
           task.completed
-            ? "bg-[#141a26]/60 border-[#1e2636] opacity-75"
-            : "bg-[#18202e] border-[#232d3f] hover:border-[#334155] hover:bg-[#1c2536]"
+            ? "bg-[var(--color-surface-completed)] border-[var(--color-border-completed)] opacity-70"
+            : "bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-hover)]"
         }`}
       >
         <div className="flex items-start sm:items-center gap-3.5 min-w-0 sm:flex-1 sm:mr-4">
@@ -81,24 +81,28 @@ export function TaskCard({
               aria-label={`Marcar "${task.title}" como ${task.completed ? "pendiente" : "completada"}`}
             />
           </span>
-          <div className="p-2 rounded-lg bg-[#141a26] border border-[#232d3f] shrink-0">
+          <div className="p-2 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] shrink-0">
             {getCategoryIcon()}
           </div>
           <div className="min-w-0 flex-1">
             <h4
               className={`text-sm font-medium line-clamp-2 ${
                 task.completed
-                  ? "line-through text-[#64748b]"
-                  : "text-[#f1f5f9] group-hover:text-blue-400"
+                  ? "line-through text-[var(--color-text-muted)]"
+                  : "text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)]"
               }`}
             >
               {task.title}
             </h4>
-            {task.description && (
-              <p className="text-xs text-[#8b9bb4] line-clamp-2 mt-0.5">
+            {task.summary ? (
+              <p className="text-xs italic text-[var(--color-text-secondary)] line-clamp-2 mt-0.5">
+                &ldquo;{task.summary}&rdquo;
+              </p>
+            ) : task.description ? (
+              <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2 mt-0.5">
                 {task.description}
               </p>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -110,7 +114,7 @@ export function TaskCard({
             {PRIORITY_LABELS[task.priority]}
           </Badge>
 
-          <span className="text-[11px] text-[#64748b] flex items-center gap-1 ml-auto sm:ml-0">
+          <span className="text-[11px] text-[var(--color-text-muted)] flex items-center gap-1 ml-auto sm:ml-0">
             <Clock className="w-3 h-3" />
             {formatRelativeTime(task.createdAt)}
           </span>
@@ -121,7 +125,7 @@ export function TaskCard({
                 e.stopPropagation();
                 onEdit(task);
               }}
-              className="p-1.5 rounded-lg text-[#8b9bb4] hover:text-[#f1f5f9] hover:bg-[#232d3f] transition-colors"
+              className="p-1.5 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] transition-colors"
               title="Editar Tarea"
               aria-label={`Editar ${task.title}`}
             >
@@ -132,7 +136,7 @@ export function TaskCard({
                 e.stopPropagation();
                 onDelete(task);
               }}
-              className="p-1.5 rounded-lg text-[#8b9bb4] hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              className="p-1.5 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-danger)] hover:bg-red-500/10 transition-colors"
               title="Eliminar Tarea"
               aria-label={`Eliminar ${task.title}`}
             >
@@ -157,10 +161,10 @@ export function TaskCard({
         }
       }}
       aria-label={`Ver detalle de la tarea "${task.title}"`}
-      className={`group relative flex flex-col justify-between p-4 rounded-2xl border transition-all duration-200 select-none cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6]/40 ${
+      className={`group relative flex flex-col justify-between h-full p-4 rounded-2xl border transition-all duration-200 select-none cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 ${
         task.completed
-          ? "bg-[#141a26]/60 border-[#1c2433] opacity-75"
-          : "bg-[#18202e] border-[#232d3f] hover:border-[#334155] hover:bg-[#1c2536] hover:shadow-xl hover:shadow-black/40"
+          ? "bg-[var(--color-surface-completed)] border-[var(--color-border-completed)] opacity-70"
+          : "bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-hover)]"
       }`}
     >
       <div>
@@ -174,7 +178,7 @@ export function TaskCard({
                 aria-label={`Marcar "${task.title}" como ${task.completed ? "pendiente" : "completada"}`}
               />
             </span>
-            <div className="p-2 rounded-xl bg-[#141a26] border border-[#232d3f] group-hover:border-[#334155] transition-colors">
+            <div className="p-2 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] group-hover:border-[var(--color-border)] transition-colors">
               {getCategoryIcon()}
             </div>
           </div>
@@ -185,7 +189,7 @@ export function TaskCard({
                 e.stopPropagation();
                 onEdit(task);
               }}
-              className="p-1.5 rounded-lg text-[#8b9bb4] hover:text-[#f1f5f9] hover:bg-[#232d3f] transition-colors"
+              className="p-1.5 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] transition-colors"
               title="Editar Tarea"
               aria-label={`Editar ${task.title}`}
             >
@@ -196,7 +200,7 @@ export function TaskCard({
                 e.stopPropagation();
                 onDelete(task);
               }}
-              className="p-1.5 rounded-lg text-[#8b9bb4] hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              className="p-1.5 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-danger)] hover:bg-red-500/10 transition-colors"
               title="Eliminar Tarea"
               aria-label={`Eliminar ${task.title}`}
             >
@@ -209,22 +213,26 @@ export function TaskCard({
         <h4
           className={`text-sm font-semibold leading-snug line-clamp-2 transition-colors ${
             task.completed
-              ? "line-through text-[#64748b]"
-              : "text-[#f1f5f9] group-hover:text-blue-400"
+              ? "line-through text-[var(--color-text-muted)]"
+              : "text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)]"
           }`}
         >
           {task.title}
         </h4>
 
-        {task.description && (
-          <p className="text-xs text-[#8b9bb4] line-clamp-2 mt-1.5 leading-relaxed">
+        {task.summary ? (
+          <p className="text-xs italic text-[var(--color-text-secondary)] line-clamp-2 mt-1.5 leading-relaxed">
+            &ldquo;{task.summary}&rdquo;
+          </p>
+        ) : task.description ? (
+          <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2 mt-1.5 leading-relaxed">
             {task.description}
           </p>
-        )}
+        ) : null}
       </div>
 
       {/* Bottom Metadata: Badges & Timestamp */}
-      <div className="flex items-center justify-between pt-3 mt-4 border-t border-[#232d3f]/60">
+      <div className="flex items-center justify-between pt-3 mt-4 border-t border-[var(--color-border)]/60">
         <div className="flex items-center gap-1.5 flex-wrap">
           <Badge category={task.category} size="sm">
             {CATEGORY_LABELS[task.category]}
@@ -234,7 +242,7 @@ export function TaskCard({
           </Badge>
         </div>
 
-        <span className="text-[11px] text-[#64748b] flex items-center gap-1">
+        <span className="text-[11px] text-[var(--color-text-muted)] flex items-center gap-1">
           <Clock className="w-3 h-3" />
           {formatRelativeTime(task.createdAt)}
         </span>

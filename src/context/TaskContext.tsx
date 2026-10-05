@@ -15,6 +15,9 @@ import {
   TaskViewMode,
 } from "@/types/task";
 import { TaskStorageRepository } from "@/services/taskStorage";
+import { useToast } from "@/context/ToastContext";
+
+const PAGE_SIZE = 10;
 
 interface TaskContextType {
   tasks: Task[];
@@ -54,6 +57,10 @@ interface TaskContextType {
   closeViewModal: () => void;
   toggleMobileSidebar: () => void;
   closeMobileSidebar: () => void;
+  paginatedTasks: Task[];
+  currentPage: number;
+  totalPages: number;
+  setCurrentPage: (page: number) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -81,30 +88,14 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const [viewingTask, setViewingTask] = useState<Task | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Hydration has not finished while the render is still reading the server
   // snapshot. Once the client snapshot is available the tasks are already on
   // screen, so there is no intermediate empty state to represent.
   const isLoading = tasks === TaskStorageRepository.getServerSnapshot();
 
-  const createTask = (input: TaskCreateInput) => {
-    TaskStorageRepository.create(input);
-    setIsCreateModalOpen(false);
-  };
-
-  const updateTask = (id: string, input: TaskUpdateInput) => {
-    TaskStorageRepository.update(id, input);
-    setEditingTask(null);
-  };
-
-  const deleteTask = (id: string) => {
-    TaskStorageRepository.delete(id);
-    setDeletingTask(null);
-  };
-
-  const toggleTask = (id: string) => {
-    TaskStorageRepository.toggle(id);
-  };
+  const { success } = useToast();
 
   // Stats calculation
   const stats = useMemo(() => {
@@ -132,7 +123,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
 
   // Filtered tasks computation
   const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
+    const filtered = tasks.filter((task) => {
       // Status filter
       if (filter === "active" && task.completed) return false;
       if (filter === "completed" && !task.completed) return false;
@@ -144,16 +135,60 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         const matchesTitle = task.title.toLowerCase().includes(query);
+        const matchesSummary = task.summary?.toLowerCase().includes(query) ?? false;
         const matchesDesc = task.description?.toLowerCase().includes(query) ?? false;
         const matchesCategory = task.category.toLowerCase().includes(query);
-        if (!matchesTitle && !matchesDesc && !matchesCategory) {
-          return false;
-        }
+
+        return matchesTitle || matchesSummary || matchesDesc || matchesCategory;
       }
 
       return true;
     });
+    return [...filtered].sort((a, b) => {
+      const orderA = a.order ?? 0;
+      const orderB = b.order ?? 0;
+      return orderA - orderB;
+    });
   }, [tasks, filter, categoryFilter, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTasks.length / PAGE_SIZE));
+
+  const paginatedTasks = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredTasks.slice(start, start + PAGE_SIZE);
+  }, [filteredTasks, currentPage]);
+
+  const createTask = (input: TaskCreateInput) => {
+    TaskStorageRepository.create(input);
+    setIsCreateModalOpen(false);
+    setCurrentPage(1);
+    success("Tarea creada");
+  };
+
+  const updateTask = (id: string, input: TaskUpdateInput) => {
+    TaskStorageRepository.update(id, input);
+    setEditingTask(null);
+    success("Tarea actualizada");
+  };
+
+  const deleteTask = (id: string) => {
+    TaskStorageRepository.delete(id);
+    setDeletingTask(null);
+    const remaining = Math.max(0, filteredTasks.length - 1);
+    const newTotalPages = Math.max(1, Math.ceil(remaining / PAGE_SIZE));
+    if (currentPage > newTotalPages) {
+      setCurrentPage(newTotalPages);
+    }
+    success("Tarea eliminada");
+  };
+
+  const toggleTask = (id: string) => {
+    const task = tasks.find((t) => t.id === id);
+    TaskStorageRepository.toggle(id);
+    if (task) {
+      success(task.completed ? "Tarea reactivada" : "Tarea completada");
+    }
+  };
 
   const value: TaskContextType = {
     tasks,
@@ -173,9 +208,21 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     updateTask,
     deleteTask,
     toggleTask,
-    setFilter,
-    setCategoryFilter,
-    setSearchQuery,
+    setFilter: (newFilter: TaskFilter) => {
+      setFilter(newFilter);
+      setCategoryFilter(null);
+      setCurrentPage(1);
+      setIsMobileSidebarOpen(false);
+    },
+    setCategoryFilter: (category: string | null) => {
+      setCategoryFilter(category);
+      setCurrentPage(1);
+      setIsMobileSidebarOpen(false);
+    },
+    setSearchQuery: (query: string) => {
+      setSearchQuery(query);
+      setCurrentPage(1);
+    },
     setViewMode,
     openCreateModal: () => setIsCreateModalOpen(true),
     closeCreateModal: () => setIsCreateModalOpen(false),
@@ -187,6 +234,10 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     closeViewModal: () => setViewingTask(null),
     toggleMobileSidebar: () => setIsMobileSidebarOpen((prev) => !prev),
     closeMobileSidebar: () => setIsMobileSidebarOpen(false),
+    paginatedTasks,
+    currentPage,
+    totalPages,
+    setCurrentPage,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

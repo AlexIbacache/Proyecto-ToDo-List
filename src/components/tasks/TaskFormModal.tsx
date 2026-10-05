@@ -12,6 +12,7 @@ export interface TaskFormModalProps {
   onClose: () => void;
   onSubmit: (data: {
     title: string;
+    summary?: string;
     description?: string;
     category: TaskCategory;
     priority: TaskPriority;
@@ -26,6 +27,7 @@ export function TaskFormModal({
   initialTask,
 }: TaskFormModalProps) {
   const [title, setTitle] = useState(initialTask?.title ?? "");
+  const [summary, setSummary] = useState(initialTask?.summary ?? "");
   const [description, setDescription] = useState(initialTask?.description ?? "");
   const [category, setCategory] = useState<TaskCategory>(initialTask?.category ?? "work");
   const [priority, setPriority] = useState<TaskPriority>(initialTask?.priority ?? "medium");
@@ -40,6 +42,7 @@ export function TaskFormModal({
 
     onSubmit({
       title: title.trim(),
+      summary: summary.trim() || undefined,
       description: description.trim() || undefined,
       category,
       priority,
@@ -70,14 +73,14 @@ export function TaskFormModal({
           ? "Actualiza los detalles y propiedades de esta tarea"
           : "Agrega una nueva tarea a tu área de trabajo"
       }
-      maxWidth="md"
+      maxWidth="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title Field */}
         <div>
           <label
             htmlFor="task-title"
-            className="block text-xs font-semibold text-[#cbd5e1] mb-1.5"
+            className="block text-xs font-semibold text-[var(--color-text-primary)] mb-1.5"
           >
             Título de la Tarea <span className="text-red-400">*</span>
           </label>
@@ -94,20 +97,37 @@ export function TaskFormModal({
           />
         </div>
 
-        {/* Description Field */}
+        {/* Summary Field (short, quoted on the card) */}
+        <div>
+          <label
+            htmlFor="task-summary"
+            className="block text-xs font-semibold text-[var(--color-text-primary)] mb-1.5"
+          >
+            Resumen <span className="text-[var(--color-text-muted)] font-normal">(Opcional · se muestra entre comillas)</span>
+          </label>
+          <Input
+            id="task-summary"
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
+            placeholder="Una línea que resuma la tarea..."
+          />
+        </div>
+
+        {/* Full body Field (large, Notion-style) */}
         <div>
           <label
             htmlFor="task-description"
-            className="block text-xs font-semibold text-[#cbd5e1] mb-1.5"
+            className="block text-xs font-semibold text-[var(--color-text-primary)] mb-1.5"
           >
-            Descripción <span className="text-[#64748b] font-normal">(Opcional)</span>
+            Descripción completa <span className="text-[var(--color-text-muted)] font-normal">(Opcional)</span>
           </label>
           <Textarea
             id="task-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Añadir notas relevantes, enlaces o contexto..."
-            rows={3}
+            placeholder="Escribe aquí la tarea completa: pasos, contexto, enlaces, criterios de aceptación..."
+            rows={10}
+            className="min-h-[220px] max-h-[45vh] overflow-y-auto leading-relaxed"
           />
         </div>
 
@@ -116,7 +136,7 @@ export function TaskFormModal({
         <div role="group" aria-labelledby="task-category-label">
           <span
             id="task-category-label"
-            className="block text-xs font-semibold text-[#cbd5e1] mb-1.5"
+            className="block text-xs font-semibold text-[var(--color-text-primary)] mb-1.5"
           >
             Categoría
           </span>
@@ -129,8 +149,8 @@ export function TaskFormModal({
                 onClick={() => setCategory(c.key)}
                 className={`py-2 px-2.5 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer ${
                   category === c.key
-                    ? "bg-[#2563eb] text-white border-[#2563eb] shadow-sm shadow-[#2563eb]/30"
-                    : "bg-[#141a26] text-[#8b9bb4] border-[#232d3f] hover:border-[#334155] hover:text-[#f1f5f9]"
+                    ? "bg-[var(--color-accent)] text-white border-[var(--color-accent)] shadow-sm shadow-[var(--color-accent)]/30"
+                    : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 {c.label}
@@ -143,7 +163,7 @@ export function TaskFormModal({
         <div role="group" aria-labelledby="task-priority-label">
           <span
             id="task-priority-label"
-            className="block text-xs font-semibold text-[#cbd5e1] mb-1.5"
+            className="block text-xs font-semibold text-[var(--color-text-primary)] mb-1.5"
           >
             Prioridad
           </span>
@@ -156,8 +176,8 @@ export function TaskFormModal({
                 onClick={() => setPriority(p.key)}
                 className={`py-2 px-2.5 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer ${
                   priority === p.key
-                    ? "bg-[#2563eb] text-white border-[#2563eb] shadow-sm shadow-[#2563eb]/30"
-                    : "bg-[#141a26] text-[#8b9bb4] border-[#232d3f] hover:border-[#334155] hover:text-[#f1f5f9]"
+                    ? "bg-[var(--color-accent)] text-white border-[var(--color-accent)] shadow-sm shadow-[var(--color-accent)]/30"
+                    : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 {p.label}
@@ -167,7 +187,7 @@ export function TaskFormModal({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#232d3f]">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[var(--color-border)]">
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancelar
           </Button>

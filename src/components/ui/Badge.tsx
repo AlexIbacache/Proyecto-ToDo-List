@@ -21,7 +21,7 @@ export function Badge({
     md: "text-xs px-2.5 py-1",
   };
 
-  let colorStyles = "bg-[#1e2636] text-[#94a3b8] border border-[#2d3a52]";
+  let colorStyles = "bg-[var(--color-surface)] text-[var(--color-text-secondary)] border border-[var(--color-border)]";
 
   if (category) {
     switch (category) {

@@ -1,0 +1,64 @@
+# Tasks
+
+## 1. Dependencies and Font Setup
+
+- [x] 1.1 Install `motion` (framer-motion), `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` via pnpm. Verify by running `pnpm ls motion @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities` and confirming all four packages appear.
+- [x] 1.2 Configure Inter font via `next/font/google` in `src/app/layout.tsx` with `variable` output. Apply the CSS variable to `<html>`. Verify by inspecting the rendered page and confirming Inter is the active font-family.
+
+## 2. Design Token System and Theme
+
+- [x] 2.1 Rewrite `src/app/globals.css` to define CSS custom properties under `[data-theme="dark"]` and `[data-theme="light"]` selectors using the color palette from design.md. Replace the existing `@theme` static values with references to these variables so Tailwind 4 can consume them. Verify by inspecting computed styles and confirming they change when `data-theme` attribute is toggled.
+- [x] 2.2 Create `src/context/ThemeContext.tsx` with a `ThemeProvider` that reads the saved theme from localStorage (key `taskflow_theme`), falls back to `prefers-color-scheme`, sets `data-theme` on `<html>`, and exposes `theme` + `toggleTheme` via `useTheme()`. Verify by calling `toggleTheme()` in dev tools console and confirming `data-theme` switches and persists on reload.
+- [x] 2.3 Add an inline `<script>` in `src/app/layout.tsx` that synchronously reads `localStorage.getItem('taskflow_theme')` or `matchMedia('(prefers-color-scheme: dark)')` and sets `document.documentElement.dataset.theme` before React hydrates, preventing FOUC. Verify by hard-reloading in light mode and confirming no dark flash.
+- [x] 2.4 Create a `ThemeToggle` component (`src/components/ui/ThemeToggle.tsx`) with sun/moon icons that calls `toggleTheme()`. Add it to the Header component. Verify by clicking the toggle and observing the theme switch with transition.
+
+## 3. Token Migration of Existing Components
+
+- [x] 3.1 Migrate all UI atom components (`Button`, `Input`, `Textarea`, `Checkbox`, `Badge`, `Modal`, `EmptyState`, `DeleteConfirmDialog`) from hardcoded hex colors to CSS custom property tokens (e.g., `bg-[var(--color-surface)]`, `text-[var(--color-text-primary)]`). Verify each component renders correctly in both dark and light themes.
+- [x] 3.2 Migrate layout components (`AppLayout`, `Sidebar`, `Header`) to use CSS custom property tokens. Verify sidebar, header, and main area render correctly in both themes.
+- [x] 3.3 Migrate task components (`TaskCard`, `TaskList`, `TaskWorkspace`, `TaskFormModal`, `TaskDetailModal`) to use CSS custom property tokens. Verify task cards, list view, grid view, and modals render correctly in both themes.
+- [x] 3.4 Add a smooth CSS transition on `background-color`, `color`, and `border-color` to the `html` or `body` element so theme switches feel natural (duration ~200ms). Verify by toggling the theme and observing a smooth transition rather than an instant swap.
+
+## 4. Motion Animations
+
+- [x] 4.1 Wrap task list items in `motion.div` with `AnimatePresence` in `TaskList.tsx`. Add fade+slide enter animation (`initial: {opacity:0, y:20}`, `animate: {opacity:1, y:0}`) and fade+collapse exit animation (`exit: {opacity:0, height:0}`). Add `layout` prop for reorder animations. Verify by adding/removing a task and observing smooth enter/exit transitions.
+- [x] 4.2 Replace the Modal component's conditional render with `AnimatePresence` + `motion.div`. Add overlay fade-in, modal scale-up on open, and scale-down + fade-out on close. Verify by opening and closing a modal and observing the animation.
+- [x] 4.3 Replace the mobile sidebar's conditional render with `AnimatePresence` + `motion.div` for slide-in/slide-out transitions. Verify on a mobile viewport by opening and closing the sidebar.
+- [ ] 4.4 Add subtle hover scale animations (`whileHover: {scale: 1.02}`) on primary action buttons and task cards. Verify by hovering over buttons and cards and observing the scale effect. (Partial: task cards use `whileHover={{ y: -3 }}`; Button hover animation still pending.)
+- [x] 4.5 Add `prefers-reduced-motion` support by reading `useReducedMotion()` from motion and conditionally disabling animations. Verify by enabling reduced-motion in OS settings and confirming animations are absent.
+
+## 5. Drag and Drop
+
+- [x] 5.1 Add `order: number` field to the `Task` type in `src/types/task.ts`. Update `TaskStorageRepository.create()` to assign `order` as `Math.max(...orders) + 1` (or 0 for the first task). Update seed tasks with ascending order values. Verify by creating a task and confirming `order` is present in localStorage.
+- [x] 5.2 Sort tasks by `order` in `TaskStorageRepository.getAll()` or in the context's `filteredTasks` computation before applying pagination. Verify by inspecting the rendered order matches the `order` field.
+- [ ] 5.3 Add a `reorderTasks(activeId: string, overId: string)` function to `TaskContext` that computes new order values and calls `TaskStorageRepository.saveAll()`. Verify by calling it programmatically and confirming localStorage order changes.
+- [ ] 5.4 Create a `DragHandle` component (`src/components/ui/DragHandle.tsx`) using `useSortable` attributes from @dnd-kit. It should render a grip icon and forward drag listener props. Verify the component renders and is keyboard-focusable.
+- [ ] 5.5 Wrap the task list rendering area in `DndContext` + `SortableContext` in `TaskList.tsx`. Wrap each `TaskCard` in a `SortableItem` that uses `useSortable` and renders the `DragHandle`. Add a `DragOverlay` for the dragged task clone with elevated styling. Use `restrictToVerticalAxis` modifier and `PointerSensor` + `TouchSensor` (with activation constraint for touch). Wire `onDragEnd` to call `reorderTasks`. Verify by dragging a task to a new position and confirming the order persists after reload.
+- [ ] 5.6 Ensure drag-and-drop works correctly within filtered and paginated views. Reorder should update the task's absolute `order` value, not just the visual position. Verify by filtering to "active", reordering, clearing the filter, and confirming the order change is reflected globally.
+
+## 6. Pagination
+
+- [x] 6.1 Add `currentPage` state and `setCurrentPage` action to `TaskContext`. Add a `paginatedTasks` computed value derived from `filteredTasks` using `useMemo` with `PAGE_SIZE = 10`. Export `currentPage`, `totalPages`, `setCurrentPage` from context. Verify by logging `paginatedTasks.length` with more than 10 filtered tasks and confirming it returns at most 10.
+- [x] 6.2 Create a `Pagination` component (`src/components/ui/Pagination.tsx`) that renders previous/next buttons, current page indicator, and total pages. Style it consistently with the design system. Verify by rendering it with mock data and clicking through pages.
+- [x] 6.3 Integrate `Pagination` into `TaskList.tsx` below the task grid/list. Show it only when `totalPages > 1`. Verify pagination controls appear with 11+ filtered tasks and hide with 10 or fewer.
+- [x] 6.4 Add pagination reset logic: reset to page 1 on filter change, category change, search query change, and task creation. Adjust current page on task deletion when the current page exceeds the new total pages. Verify each scenario by performing the action and confirming the page is correct.
+- [ ] 6.3 Integrate `Pagination` into `TaskList.tsx` below the task grid/list. Show it only when `totalPages > 1`. Verify pagination controls appear with 11+ filtered tasks and hide with 10 or fewer.
+- [ ] 6.4 Add pagination reset logic: reset to page 1 on filter change, category change, search query change, and task creation. Adjust current page on task deletion when the current page exceeds the new total pages. Verify each scenario by performing the action and confirming the page is correct.
+
+## 7. Toast Notifications
+
+- [x] 7.1 Create `src/context/ToastContext.tsx` with a `ToastProvider` and `useToast()` hook exposing `toast.success(message)` and `toast.error(message)`. Maintain an array of toast objects with auto-generated IDs and auto-dismiss after 4 seconds. Verify by calling `toast.success("test")` and confirming a toast appears and auto-dismisses.
+- [x] 7.2 Create a `Toast` component (`src/components/ui/Toast.tsx`) and a `ToastContainer` that renders via a portal at the bottom-right of the viewport. Each toast has a dismiss button. Use Motion for enter/exit animations (slide-in from right, fade-out). Stack multiple toasts vertically. Verify by triggering multiple toasts and confirming they stack and animate.
+- [x] 7.3 Wire toast calls into `TaskContext` actions: success toast on create ("Task created"), update ("Task updated"), delete ("Task deleted"), and toggle ("Task completed" / "Task reactivated"). Verify by performing each action and seeing the corresponding toast.
+
+## 8. Responsive and Interaction Polish
+
+- [x] 8.1 Review and refine responsive breakpoints for the Sidebar (collapsed on mobile, persistent on `md+`), Header (search adapts width, theme toggle and view toggle remain accessible), and TaskList (grid columns: 1 on mobile, 2 on `sm`, 3 on `lg`, 4 on `xl`). Verify by resizing the browser from 320px to 1440px and confirming layout adapts smoothly at each breakpoint.
+- [x] 8.2 Ensure pagination controls, drag handles, and the theme toggle are comfortably tappable (min 44px touch target) on mobile viewports. Verify by testing on a mobile viewport (or device emulator) and confirming all controls are usable.
+- [x] 8.3 Audit every interactive element (`Button`, `Input`, `Textarea`, `Checkbox`, nav items, category buttons, priority buttons, view toggle, theme toggle, drag handle, pagination controls) for consistent hover, focus-visible, active, and disabled states using the token system. Verify by tabbing through the interface and confirming focus rings are visible and consistent.
+- [x] 8.4 Ensure scrollbar styling applies to both themes (dark scrollbar on dark theme, subtle light scrollbar on light theme). Verify by scrolling a long task list in both themes.
+
+## 9. Integration Verification
+
+- [x] 9.1 Verify the complete flow end-to-end: create a task (toast appears, page resets to 1, task animates in), toggle its status (toast, visual state change), edit it (modal animates, toast on save), drag it to a new position (visual feedback, order persists), search for it (pagination resets), filter (pagination resets), paginate through results, delete it (confirm dialog animates, toast, page adjusts if needed, task animates out). All in both dark and light themes. Verify by performing each action sequentially and confirming expected behavior.
+- [x] 9.2 Verify localStorage persistence across a full page reload: tasks, task order, theme preference, and ensure the application loads without FOUC or data loss. Verify by performing actions, reloading, and confirming all state is preserved.

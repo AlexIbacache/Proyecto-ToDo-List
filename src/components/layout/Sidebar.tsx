@@ -29,22 +29,20 @@ function NavItem({ label, icon, active, count, onClick }: NavItemProps) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer ${
-        active
-          ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/20"
-          : "text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-[#18202e]"
-      }`}
+      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer ${active
+          ? "bg-[var(--color-accent)] text-white shadow-md shadow-[var(--color-accent)]/20"
+          : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface)]"
+        }`}
     >
       <div className="flex items-center gap-3">
         <span className="shrink-0">{icon}</span>
         <span>{label}</span>
       </div>
       <span
-        className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-          active
+        className={`text-xs px-2 py-0.5 rounded-full font-semibold ${active
             ? "bg-white/20 text-white"
-            : "bg-[#1e2636] text-[#64748b] group-hover:text-[#94a3b8]"
-        }`}
+            : "bg-[var(--color-surface)] text-[var(--color-text-muted)] group-hover:text-[var(--color-text-secondary)]"
+          }`}
       >
         {count}
       </span>
@@ -86,26 +84,26 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
   ];
 
   return (
-    <aside className="w-64 h-full bg-[#141a26] border-r border-[#232d3f] flex flex-col justify-between shrink-0 select-none">
+    <aside className={`h-full ${isMobile ? "w-64" : "w-72"} bg-[var(--color-bg-secondary)] border-r border-[var(--color-border)] flex flex-col justify-between shrink-0 select-none transition-colors duration-200`}>
       {/* Top Branding */}
       <div>
-        <div className="p-5 flex items-center justify-between border-b border-[#232d3f]">
+        <div className="p-5 flex items-center justify-between border-b border-[var(--color-border)]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#2563eb] flex items-center justify-center text-white shadow-md shadow-[#2563eb]/30">
+            <div className="w-9 h-9 rounded-xl bg-[var(--color-accent)] flex items-center justify-center text-white shadow-md shadow-[var(--color-accent)]/30">
               <CheckSquare className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
-              <h1 className="text-base font-bold text-[#f1f5f9] tracking-tight leading-none">
-                TaskFlow
+              <h1 className="text-base font-bold text-[var(--color-text-primary)] tracking-tight leading-none">
+                ToDo List
               </h1>
-              <span className="text-[11px] text-[#8b9bb4] font-medium">Área de trabajo</span>
+              <span className="text-[11px] text-[var(--color-text-secondary)] font-medium">Área de trabajo</span>
             </div>
           </div>
 
           {isMobile && (
             <button
               onClick={closeMobileSidebar}
-              className="p-1 rounded-lg text-[#8b9bb4] hover:text-[#f1f5f9] hover:bg-[#18202e] transition-colors"
+              className="p-1 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface)] transition-colors"
               aria-label="Cerrar barra lateral"
             >
               <X className="w-5 h-5" />
@@ -117,7 +115,7 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
         <div className="p-4">
           <Button
             variant="primary"
-            className="w-full justify-center shadow-lg shadow-[#2563eb]/25 py-2.5 font-semibold text-sm"
+            className="w-full justify-center shadow-lg shadow-[var(--color-accent)]/25 py-2.5 font-semibold text-sm"
             icon={<Plus className="w-4 h-4 stroke-[2.5]" />}
             onClick={() => {
               openCreateModal();
@@ -156,13 +154,13 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
         {/* Categories Section */}
         <div className="px-4 mt-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold tracking-wider text-[#64748b] uppercase">
+            <span className="text-[11px] font-semibold tracking-wider text-[var(--color-text-muted)] uppercase">
               Categorías
             </span>
             {categoryFilter && (
               <button
                 onClick={() => setCategoryFilter(null)}
-                className="text-[11px] text-[#3b82f6] hover:underline"
+                className="text-[11px] text-[var(--color-accent)] hover:underline"
               >
                 Limpiar
               </button>
@@ -176,17 +174,16 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
                 <button
                   key={cat.key}
                   onClick={() => handleCategorySelect(cat.key)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                    isActive
-                      ? "bg-[#1e2636] text-[#f1f5f9] border border-[#2d3a52]"
-                      : "text-[#8b9bb4] hover:text-[#cbd5e1] hover:bg-[#18202e]"
-                  }`}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${isActive
+                      ? "bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] border border-[var(--color-border)]"
+                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface)]"
+                    }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <span className={`w-2 h-2 rounded-full ${cat.color}`} />
                     <span>{cat.label}</span>
                   </div>
-                  <span className="text-[11px] text-[#64748b]">{count}</span>
+                  <span className="text-[11px] text-[var(--color-text-muted)]">{count}</span>
                 </button>
               );
             })}
@@ -195,7 +192,7 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
       </div>
 
       {/* Footer Info */}
-      <div className="p-4 border-t border-[#232d3f] text-xs text-[#64748b] flex items-center justify-between">
+      <div className="p-4 border-t border-[var(--color-border)] text-xs text-[var(--color-text-muted)] flex items-center justify-between">
         <span>TaskFlow v1.0.0</span>
         <span className="flex items-center gap-1.5 text-[11px]">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

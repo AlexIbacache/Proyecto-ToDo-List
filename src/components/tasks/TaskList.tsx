@@ -2,15 +2,22 @@
 
 import React from "react";
 import { Plus } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useTasks } from "@/context/TaskContext";
 import { TaskCard } from "./TaskCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
+import { Pagination } from "@/components/ui/Pagination";
 import { CATEGORY_LABELS, TaskCategory } from "@/types/task";
 
 export function TaskList() {
+  const shouldReduceMotion = useReducedMotion();
   const {
     filteredTasks,
+    paginatedTasks,
+    currentPage,
+    totalPages,
+    setCurrentPage,
     isLoading,
     viewMode,
     filter,
@@ -56,20 +63,20 @@ export function TaskList() {
   return (
     <div className="space-y-6">
       {/* Top Workspace Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#232d3f]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[var(--color-border)]">
         <div>
-          <div className="flex items-center gap-2 text-xs text-[#8b9bb4] mb-1">
+          <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)] mb-1">
             <span>Área de trabajo</span>
             <span>/</span>
-            <span className="text-[#cbd5e1] font-medium">
+            <span className="text-[var(--color-text-primary)] font-medium">
               {getBreadcrumbLabel()}
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-bold text-[#f1f5f9] tracking-tight">
+            <h2 className="text-xl font-bold text-[var(--color-text-primary)] tracking-tight">
               {getHeadingTitle()}
             </h2>
-            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#18202e] border border-[#232d3f] text-[#8b9bb4]">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)]">
               {filteredTasks.length} {filteredTasks.length === 1 ? "tarea" : "tareas"}
             </span>
           </div>
@@ -97,7 +104,7 @@ export function TaskList() {
           aria-live="polite"
           aria-busy="true"
         >
-          <span className="text-sm text-[#8b9bb4]">Cargando tareas...</span>
+          <span className="text-sm text-[var(--color-text-secondary)]">Cargando tareas...</span>
         </div>
       ) : filteredTasks.length === 0 ? (
         <EmptyState
@@ -120,33 +127,60 @@ export function TaskList() {
         />
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              viewMode="grid"
-              onToggle={toggleTask}
-              onEdit={openEditModal}
-              onDelete={openDeleteModal}
-              onView={openViewModal}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {paginatedTasks.map((task) => (
+              <motion.div
+                key={task.id}
+                layout
+                className="h-full"
+                initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
+                whileHover={shouldReduceMotion ? undefined : { y: -3 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: "easeOut" }}
+              >
+                <TaskCard
+                  task={task}
+                  viewMode="grid"
+                  onToggle={toggleTask}
+                  onEdit={openEditModal}
+                  onDelete={openDeleteModal}
+                  onView={openViewModal}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       ) : (
         <div className="flex flex-col space-y-2.5">
-          {filteredTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              viewMode="list"
-              onToggle={toggleTask}
-              onEdit={openEditModal}
-              onDelete={openDeleteModal}
-              onView={openViewModal}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {paginatedTasks.map((task) => (
+              <motion.div
+                key={task.id}
+                layout
+                initial={{ opacity: 0, x: shouldReduceMotion ? 0 : -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: "easeOut" }}
+              >
+                <TaskCard
+                  task={task}
+                  viewMode="list"
+                  onToggle={toggleTask}
+                  onEdit={openEditModal}
+                  onDelete={openDeleteModal}
+                  onView={openViewModal}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

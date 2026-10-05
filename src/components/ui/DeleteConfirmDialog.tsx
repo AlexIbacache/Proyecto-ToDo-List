@@ -29,19 +29,19 @@ export function DeleteConfirmDialog({
         <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 mb-3">
           <AlertTriangle className="w-6 h-6 stroke-[2]" />
         </div>
-        <p className="text-sm text-[#cbd5e1] mb-1">
+        <p className="text-sm text-[var(--color-text-primary)] mb-1">
           ¿Estás seguro de que deseas eliminar permanentemente esta tarea?
         </p>
         {itemTitle && (
-          <p className="text-xs font-semibold text-[#f1f5f9] bg-[#10141d] px-3 py-1.5 rounded-lg border border-[#232d3f] max-w-full truncate mb-4">
+          <p className="text-xs font-semibold text-[var(--color-text-primary)] bg-[var(--color-bg-primary)] px-3 py-1.5 rounded-lg border border-[var(--color-border)] max-w-full truncate mb-4">
             &ldquo;{itemTitle}&rdquo;
           </p>
         )}
-        <p className="text-xs text-[#8b9bb4] mb-5">
+        <p className="text-xs text-[var(--color-text-secondary)] mb-5">
           Esta acción no se puede deshacer.
         </p>
 
-        <div className="flex items-center justify-end gap-3 w-full border-t border-[#232d3f] pt-4">
+        <div className="flex items-center justify-end gap-3 w-full border-t border-[var(--color-border)] pt-4">
           <Button variant="ghost" size="sm" onClick={onClose}>
             Cancelar
           </Button>

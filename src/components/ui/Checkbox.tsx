@@ -40,14 +40,14 @@ export function Checkbox({
         <div
           className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-150 ${
             checked
-              ? "bg-[#2563eb] border-[#2563eb] text-white shadow-sm shadow-[#2563eb]/30"
-              : "border-[#334155] bg-[#18202e] hover:border-[#475569]"
+              ? "bg-[var(--color-accent)] border-[var(--color-accent)] text-white shadow-sm shadow-[var(--color-accent)]/30"
+              : "border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)]"
           }`}
         >
           {checked && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
         </div>
       </div>
-      {label && <span className="text-sm text-[#cbd5e1]">{label}</span>}
+      {label && <span className="text-sm text-[var(--color-text-primary)]">{label}</span>}
     </label>
   );
 }

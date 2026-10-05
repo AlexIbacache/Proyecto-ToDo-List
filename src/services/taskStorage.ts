@@ -25,12 +25,14 @@ const INITIAL_SEED_TASKS: Task[] = [
   {
     id: "task-1",
     title: "Inspeccionar maqueta visual en assets/maqueta.png",
+    summary: "Revisar paleta oscura, navegación lateral, barra de búsqueda y grilla de tarjetas.",
     description: "Analizar la paleta oscura, navegación lateral, barra superior de búsqueda y grilla de tarjetas.",
     completed: true,
     category: "work",
     priority: "high",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1).toISOString(),
+    order: 0,
   },
   {
     id: "task-2",
@@ -41,16 +43,19 @@ const INITIAL_SEED_TASKS: Task[] = [
     priority: "high",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
+    order: 1,
   },
   {
     id: "task-3",
     title: "Construir biblioteca de componentes UI reutilizables",
+    summary: "Button, Input, Modal, Checkbox y Badge con diseño atómico.",
     description: "Implementar componentes Button, Input, Modal, Checkbox y Badge siguiendo diseño atómico.",
     completed: false,
     category: "work",
     priority: "medium",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 10).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 10).toISOString(),
+    order: 2,
   },
   {
     id: "task-4",
@@ -61,6 +66,7 @@ const INITIAL_SEED_TASKS: Task[] = [
     priority: "high",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+    order: 3,
   },
   {
     id: "task-5",
@@ -71,6 +77,7 @@ const INITIAL_SEED_TASKS: Task[] = [
     priority: "low",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    order: 4,
   },
 ];
 
@@ -160,18 +167,22 @@ export const TaskStorageRepository = {
   create(input: TaskCreateInput): Task {
     const tasks = this.getAll();
     const now = new Date().toISOString();
+    const orders = tasks.map((t) => t.order ?? 0);
+    const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 0;
     const newTask: Task = {
       id: `task-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       title: input.title.trim(),
+      summary: input.summary?.trim() || undefined,
       description: input.description?.trim() || undefined,
       category: input.category || "general",
       priority: input.priority || "medium",
       completed: false,
       createdAt: now,
       updatedAt: now,
+      order: nextOrder,
     };
 
-    const updated = [newTask, ...tasks];
+    const updated = [...tasks, newTask];
     this.saveAll(updated);
     return newTask;
   },
@@ -185,7 +196,8 @@ export const TaskStorageRepository = {
     const updatedTask: Task = {
       ...existing,
       ...(input.title !== undefined && { title: input.title.trim() }),
-      ...(input.description !== undefined && { description: input.description.trim() }),
+      ...(input.summary !== undefined && { summary: input.summary.trim() || undefined }),
+      ...(input.description !== undefined && { description: input.description.trim() || undefined }),
       ...(input.category !== undefined && { category: input.category }),
       ...(input.priority !== undefined && { priority: input.priority }),
       ...(input.completed !== undefined && { completed: input.completed }),

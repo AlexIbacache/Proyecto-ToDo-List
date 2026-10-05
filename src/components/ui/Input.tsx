@@ -11,22 +11,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full">
         <div className="relative flex items-center">
           {icon && (
-            <div className="absolute left-3 text-[#64748b] pointer-events-none flex items-center">
+            <div className="absolute left-3 text-[var(--color-text-muted)] pointer-events-none flex items-center">
               {icon}
             </div>
           )}
           <input
             ref={ref}
             disabled={disabled}
-            className={`w-full bg-[#18202e] border ${
-              error ? "border-[#ef4444]" : "border-[#28354c]"
-            } text-[#f1f5f9] placeholder-[#64748b] rounded-lg px-3.5 py-2 text-sm transition-colors focus:outline-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] disabled:opacity-50 disabled:bg-[#131924] ${
+            className={`w-full bg-[var(--color-surface)] border ${
+              error ? "border-[var(--color-danger)]" : "border-[var(--color-border)]"
+            } text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] rounded-lg px-3.5 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] disabled:opacity-50 disabled:bg-[var(--color-bg-primary)] ${
               icon ? "pl-9" : ""
             } ${className}`}
             {...props}
           />
         </div>
-        {error && <p className="text-xs text-[#ef4444] mt-1 ml-0.5">{error}</p>}
+        {error && <p className="text-xs text-[var(--color-danger)] mt-1 ml-0.5">{error}</p>}
       </div>
     );
   }
