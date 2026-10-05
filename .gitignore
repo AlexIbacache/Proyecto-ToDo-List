@@ -56,3 +56,6 @@ Thumbs.db
 
 # Misc
 *.pem
+
+# AI tooling local state (auto-generated, machine-specific paths)
+/.atl/
