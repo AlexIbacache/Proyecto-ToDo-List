@@ -1,4 +1,8 @@
+"use client";
+
 import React, { forwardRef } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import type { HTMLMotionProps } from "motion/react";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "danger";
@@ -8,6 +12,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", variant = "primary", size = "md", icon, children, disabled, ...props }, ref) => {
+    const shouldReduceMotion = useReducedMotion();
+
     const baseStyles =
       "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none";
 
@@ -28,16 +34,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: "text-base px-4 py-2.5 gap-2.5",
     };
 
+    const hoverAnimation =
+      variant === "primary" && !disabled && !shouldReduceMotion ? { scale: 1.02 } : undefined;
+
     return (
-      <button
+      <motion.button
         ref={ref}
         disabled={disabled}
+        whileHover={hoverAnimation}
         className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
-        {...props}
+        {...(props as HTMLMotionProps<"button">)}
       >
         {icon && <span className="shrink-0">{icon}</span>}
         {children}
-      </button>
+      </motion.button>
     );
   }
 );

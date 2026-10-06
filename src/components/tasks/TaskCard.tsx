@@ -27,6 +27,7 @@ export interface TaskCardProps {
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   onView: (task: Task) => void;
+  dragHandle?: React.ReactNode;
 }
 
 export function TaskCard({
@@ -36,6 +37,7 @@ export function TaskCard({
   onEdit,
   onDelete,
   onView,
+  dragHandle,
 }: TaskCardProps) {
   const getCategoryIcon = () => {
     switch (task.category) {
@@ -61,6 +63,9 @@ export function TaskCard({
         tabIndex={0}
         onClick={() => onView(task)}
         onKeyDown={(e) => {
+          // Keys that bubble up from inner controls (drag handle, checkbox, action
+          // buttons) must not open the detail view; only the focused card does.
+          if (e.target !== e.currentTarget) return;
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             onView(task);
@@ -74,6 +79,11 @@ export function TaskCard({
         }`}
       >
         <div className="flex items-start sm:items-center gap-3.5 min-w-0 sm:flex-1 sm:mr-4">
+          {dragHandle ? (
+            <span onClick={stopCardClick} className="shrink-0">
+              {dragHandle}
+            </span>
+          ) : null}
           <span onClick={stopCardClick}>
             <Checkbox
               checked={task.completed}
@@ -155,6 +165,9 @@ export function TaskCard({
       tabIndex={0}
       onClick={() => onView(task)}
       onKeyDown={(e) => {
+        // Keys that bubble up from inner controls (drag handle, checkbox, action
+        // buttons) must not open the detail view; only the focused card does.
+        if (e.target !== e.currentTarget) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onView(task);
@@ -171,6 +184,11 @@ export function TaskCard({
         {/* Top Header Row: Checkbox, Icon, Actions */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2.5">
+            {dragHandle ? (
+              <span onClick={stopCardClick} className="shrink-0">
+                {dragHandle}
+              </span>
+            ) : null}
             <span onClick={stopCardClick}>
               <Checkbox
                 checked={task.completed}

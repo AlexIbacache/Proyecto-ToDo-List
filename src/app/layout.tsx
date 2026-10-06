@@ -9,6 +9,11 @@ import "./globals.css";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  // Disabled on purpose: the preload link made Chrome log a false "preloaded
+  // but not used within a few seconds" warning (in dev Next injects it via JS
+  // and the font is often already cached). The subset is same-origin and uses
+  // font-display: swap, so the preload hint buys almost nothing here.
+  preload: false,
 });
 
 export const metadata: Metadata = {

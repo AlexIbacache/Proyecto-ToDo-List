@@ -10,6 +10,7 @@ export interface ModalProps {
   title: string;
   description?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
   maxWidth?: "sm" | "md" | "lg" | "xl";
 }
 
@@ -19,6 +20,7 @@ export function Modal({
   title,
   description,
   children,
+  footer,
   maxWidth = "md",
 }: ModalProps) {
   const shouldReduceMotion = useReducedMotion();
@@ -54,7 +56,7 @@ export function Modal({
         <motion.div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/70"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -66,7 +68,7 @@ export function Modal({
           }}
         >
           <motion.div
-            className={`w-full ${maxWidthStyles[maxWidth]} max-h-[85vh] flex flex-col bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-2xl shadow-black/80 overflow-hidden`}
+            className={`w-full ${maxWidthStyles[maxWidth]} max-h-[95dvh] sm:max-h-[85vh] flex flex-col bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-2xl shadow-black/80 overflow-hidden`}
             initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95, y: shouldReduceMotion ? 0 : 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.97, y: shouldReduceMotion ? 0 : 8 }}
@@ -87,7 +89,12 @@ export function Modal({
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-5 overflow-y-auto">{children}</div>
+            <div className="flex-1 min-h-0 p-5 overflow-y-auto">{children}</div>
+            {footer && (
+              <div className="shrink-0 px-5 py-4 border-t border-[var(--color-border)]">
+                {footer}
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

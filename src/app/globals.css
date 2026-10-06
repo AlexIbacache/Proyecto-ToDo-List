@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* `font-sans` must resolve to the loaded Inter face. Without this, the
+   `.font-sans` class on <body> (0,1,0) overrides the `body` element rule
+   (0,0,1) with Tailwind's default system stack and Inter is never applied.
+   `inline` keeps the value literal inside the utility so `var(--font-inter)`
+   resolves on <body>, where next/font defines it. */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
 :root,
 [data-theme="dark"] {
   --color-bg-primary: #0f1219;

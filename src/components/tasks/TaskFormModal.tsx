@@ -74,8 +74,18 @@ export function TaskFormModal({
           : "Agrega una nueva tarea a tu área de trabajo"
       }
       maxWidth="lg"
+      footer={
+        <div className="flex items-center justify-end gap-2.5">
+          <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="submit" form="task-form" variant="primary" size="sm">
+            {initialTask ? "Guardar Cambios" : "Crear Tarea"}
+          </Button>
+        </div>
+      }
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form id="task-form" onSubmit={handleSubmit} className="space-y-4">
         {/* Title Field */}
         <div>
           <label
@@ -127,7 +137,7 @@ export function TaskFormModal({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Escribe aquí la tarea completa: pasos, contexto, enlaces, criterios de aceptación..."
             rows={10}
-            className="min-h-[220px] max-h-[45vh] overflow-y-auto leading-relaxed"
+            className="min-h-[120px] sm:min-h-[220px] max-h-[45vh] overflow-y-auto leading-relaxed"
           />
         </div>
 
@@ -147,7 +157,7 @@ export function TaskFormModal({
                 type="button"
                 aria-pressed={category === c.key}
                 onClick={() => setCategory(c.key)}
-                className={`py-2 px-2.5 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer ${
+                className={`py-2 px-2.5 rounded-lg text-xs font-medium border text-center transition-colors cursor-pointer ${
                   category === c.key
                     ? "bg-[var(--color-accent)] text-white border-[var(--color-accent)] shadow-sm shadow-[var(--color-accent)]/30"
                     : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)]"
@@ -174,7 +184,7 @@ export function TaskFormModal({
                 type="button"
                 aria-pressed={priority === p.key}
                 onClick={() => setPriority(p.key)}
-                className={`py-2 px-2.5 rounded-lg text-xs font-medium border text-center transition-all cursor-pointer ${
+                className={`py-2 px-2.5 rounded-lg text-xs font-medium border text-center transition-colors cursor-pointer ${
                   priority === p.key
                     ? "bg-[var(--color-accent)] text-white border-[var(--color-accent)] shadow-sm shadow-[var(--color-accent)]/30"
                     : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)]"
@@ -186,15 +196,6 @@ export function TaskFormModal({
           </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[var(--color-border)]">
-          <Button type="button" variant="ghost" size="sm" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button type="submit" variant="primary" size="sm">
-            {initialTask ? "Guardar Cambios" : "Crear Tarea"}
-          </Button>
-        </div>
       </form>
     </Modal>
   );

@@ -14,6 +14,7 @@ import {
   TaskUpdateInput,
   TaskViewMode,
 } from "@/types/task";
+import { arrayMove } from "@dnd-kit/sortable";
 import { TaskStorageRepository } from "@/services/taskStorage";
 import { useToast } from "@/context/ToastContext";
 
@@ -43,6 +44,7 @@ interface TaskContextType {
   updateTask: (id: string, input: TaskUpdateInput) => void;
   deleteTask: (id: string) => void;
   toggleTask: (id: string) => void;
+  reorderTasks: (activeId: string, overId: string) => void;
   setFilter: (filter: TaskFilter) => void;
   setCategoryFilter: (category: string | null) => void;
   setSearchQuery: (query: string) => void;
@@ -190,6 +192,23 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Reorders the FULL task list, not just the visible page: SortableContext only
+  // exposes the paginated ids, so renumbering every task by its absolute index
+  // keeps `order` globally consistent and the new sequence survives paging and
+  // filtering (drag-and-drop within filtered and paginated views).
+  const reorderTasks = (activeId: string, overId: string) => {
+    if (activeId === overId) return;
+    const ordered = [...tasks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const oldIndex = ordered.findIndex((t) => t.id === activeId);
+    const newIndex = ordered.findIndex((t) => t.id === overId);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = arrayMove(ordered, oldIndex, newIndex).map((task, index) => ({
+      ...task,
+      order: index,
+    }));
+    TaskStorageRepository.saveAll(reordered);
+  };
+
   const value: TaskContextType = {
     tasks,
     filteredTasks,
@@ -208,6 +227,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     updateTask,
     deleteTask,
     toggleTask,
+    reorderTasks,
     setFilter: (newFilter: TaskFilter) => {
       setFilter(newFilter);
       setCategoryFilter(null);
